@@ -1,5 +1,5 @@
 <!-- rozszerzamy plik podstawowy -->
-{extends file="../templates/index.html"}
+{extends file="../../templates/index.html"}
 
 <!-- blok z opisem, też wchodzi w treść ale dla wygody wydzielony -->
 {block name=desc}
@@ -12,51 +12,45 @@
 
 <!-- główny blok z treścią -->
 {block name=content}
-<form action="{$app_url}/app/credit.php#credit" method="post" id="credit">
+<form action="{$conf->action_root}CreditCalc#credit" method="post" id="credit">
 	<label for="kwota">Kwota kredytu:</label>
-	<input autocomplete="off" id="kr_kwota" type="text" name="kwota" value="{if isset($kwota)}{$kwota}{/if}" placeholder="Kwota w zł"><br/>
+	<input autocomplete="off" id="kr_kwota" type="text" name="kwota" value="{$form->kwota}" placeholder="Kwota w zł"><br/>
 	<label for="dlugosc">Na ile lat?</label>
-	<input autocomplete="off" id="dlugosc" type="text" name="ileLat" value="{if isset($ileLat)}{$ileLat}{/if}" placeholder="Długość w latach"><br/>
+	<input autocomplete="off" id="dlugosc" type="text" name="ileLat" value="{$form->ileLat}" placeholder="Długość w latach"><br/>
 	<label for="oprocentowanie">Oprocentowanie:</label>
-	<input placeholder="Wartość w %" autocomplete="off" id="oprocentowanie" type="text" name="oprocentowanie" value="{if isset($oprocentowanie)}{$oprocentowanie}{/if}"><br/>
+	<input placeholder="Wartość w %" autocomplete="off" id="oprocentowanie" type="text" name="oprocentowanie" value="{$form->oprocentowanie}"><br/>
 
-	<input type="checkbox" id="copy" value="tak" name="liczKredyt" {if isset($liczKredyt) || $liczKredyt == true}checked{/if} required><label for="copy">Wiem, że dane są tylko poglądowe</label><br/>
+	<input type="checkbox" id="copy" value="tak" name="liczKredyt" {if $form->liczKredyt == true}checked{/if} required><label for="copy">Wiem, że dane są tylko poglądowe</label><br/>
 	<input type="submit" value="Oblicz" />
 </form><div class="messages">
 	{* wyświeltenie listy błędów, jeśli istnieją *}
-	{if isset($messages)}
-		{if count($messages) > 0}
+	{if $messages->isError()}
 			<h4>Znaleziono błędy!</h4>
 			<ol id="message">
-				{foreach $messages as $msg}
+				{foreach $messages->getErrors() as $err}
 					{strip}
-					<li>{$msg}</li>
+					<li>{$err}</li>
 					{/strip}
 				{/foreach}
 			</ol>
-		{/if}
 	{/if}
 
-	{*wyświetlenie listy informacji, jeśli istnieją*}
-	{if isset($infos)}
-		{if count($infos) > 0}
-			<h4>Znaleziono błędy!</h4>
-			<ol id="info">
-				{foreach $infos as $inf}
-					{strip}
-					<li>{$inf}</li>
-					{/strip}
-				{/foreach}
-			</ol>
-		{/if}
+	{* wyświeltenie listy informacji, jeśli istnieją *}
+	{if $messages->isInfo()}
+		<h4>Informacje: </h4>
+		<ol class="inf">
+		{foreach $messages->getInfos() as $inf}
+		{strip}
+			<li>{$inf}</li>
+		{/strip}
+		{/foreach}
+		</ol>
 	{/if}
 
 	{*wyświetlenie rezultatu*}
-	{if isset($rataKredytu)}
 		<div class="result_success">
-			Rata miesięczna kredytu: {$rataKredytu}<br/>Całkowity koszt: {$calkowityKoszt}
+			Rata miesięczna kredytu: {$result->rataKredytu}<br/>Całkowity koszt: {$result->calkowityKoszt}
 		</div>
-	{/if}
 </div>
 
 {/block}

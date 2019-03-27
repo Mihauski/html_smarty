@@ -6,7 +6,7 @@
     //load class generating form
     require_once $conf->root_path.'/app/credit/CreditForm.class.php';
     //load class generating result
-    require_once $conf->root_path.'/app/calc/CreditResult.class.php';
+    require_once $conf->root_path.'/app/credit/CreditResult.class.php';
 
     /***********************************/
     /*   Cretit Calculator Controller  */
@@ -58,12 +58,12 @@ class CreditCtrl
 		}
 
 		//no sense of further validation if errors.
-		if(!$this->msgs->isError()) return false;
-
-		if($this->form->liczKredyt == "tak" && !(is_numeric($this->form->kwota) && is_numeric($this->form->ileLat) && is_numeric($this->form->oprocentowanie)))
-		{
-			$this->msgs->addError('Wartości w kredycie nie są liczbami całkowitymi.');
-		}
+		if(!$this->msgs->isError()){
+            if($this->form->liczKredyt == "tak" && !(is_numeric($this->form->kwota) && is_numeric($this->form->ileLat) && is_numeric($this->form->oprocentowanie)))
+            {
+                $this->msgs->addError('Wartości w kredycie nie są liczbami całkowitymi.');
+            }
+        }   
 		return !$this->msgs->isError();
 	}
 
@@ -71,29 +71,29 @@ class CreditCtrl
 	{
         $this->getParams();
 
-        if($this->validete())
+        if($this->validate())
         {
             $this->form->kwota = intval($this->form->kwota);
             $this->form->oprocentowanie = floatval($this->form->oprocentowanie);
             $this->form->ileLat = floatval($this->form->ileLat);
             $this->msgs->addInfo('Dane poprawne');
-        }
 			//wartosci pomocnicze do wzoru
-			$q = 1+(1/12)*($this->form->oprocentowanie/100);
-			$mies = $this->form->ileLat*12;
+			$q = 1+(1/12)*(($this->form->oprocentowanie)/100);
+			$mies = ($this->form->ileLat)*12;
 
 			if($this->form->oprocentowanie != 0)
 			{
-				$this->form->rataKredytu = ($this->form->kwota*pow($q,$mies)*($q - 1))/(pow($q,$mies) - 1);
-				$this->result->calkowityKoszt = number_format($this->form->rataKredytu*$mies,2,',',' ');
-				$this->result->rataKredytu = number_format($this->form->rataKredytu,2,',',' ');
+				$this->form->rataKredytu = (($this->form->kwota)*pow($q,$mies)*($q - 1))/(pow($q,$mies) - 1);
+				$this->result->calkowityKoszt = number_format(($this->form->rataKredytu)*$mies,2,',',' ');
+				$this->result->rataKredytu = number_format(($this->form->rataKredytu),2,',',' ');
 			}
             else
 			{
-				$this->result->rataKredytu = $this->form->kwota/$mies;
+				$this->result->rataKredytu = number_format((($this->form->kwota)/$mies),2,',',' ');
 				$this->result->calkowityKoszt = $this->form->kwota;
             }
             $this->msgs->addInfo('Obliczenia wykonane.');
+        }
 
             $this->generateView();
     }

@@ -6,7 +6,7 @@
 
 {block name=content}
 
-<form class="pure-form pure-form-stacked" action="{$conf->action_root}calc#calc" method="post" id="calc">
+<form class="pure-form pure-form-stacked" action="{$conf->action_root}ArithmeticCalc#calc" method="post" id="calc">
 	<fieldset>
 		<label for="x">Pierwsza liczba</label>
 		<input id="x" type="text" placeholder="wartość x" name="x" value="{$form->x}">
@@ -34,8 +34,7 @@
 <div class="messages">
 
 {* wyświeltenie listy błędów, jeśli istnieją *}
-{if $messages->isError()}
-	{if count($messages) > 0} 
+{if $messages->isError()} 
 		<h4>Wystąpiły błędy: </h4>
 		<ol id="message">
 		{foreach  $messages->getErrors() as $err}
@@ -44,22 +43,19 @@
 		{/strip}
 		{/foreach}
 		</ol>
-	{/if}
 {/if}
 
-<!-- {* wyświeltenie listy informacji, jeśli istnieją *}
-{if isset($infos)}
-	{if count($infos) > 0} 
+{* wyświeltenie listy informacji, jeśli istnieją *}
+{if $messages->isInfo()}
 		<h4>Informacje: </h4>
 		<ol id="info">
-		{foreach  $infos as $msg}
+		{foreach  $messages->getInfos() as $inf}
 		{strip}
-			<li>{$msg}</li>
+			<li>{$inf}</li>
 		{/strip}
 		{/foreach}
 		</ol>
-	{/if}
-{/if} -->
+{/if}
 
 {if isset($result->result)}
 <div class="result_success">
