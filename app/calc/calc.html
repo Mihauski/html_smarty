@@ -1,0 +1,72 @@
+{extends file="../../templates/index.html"}
+
+{block name=desc}
+<p>Jest to prosty kalkulator arytmetyczny, umożliwiający dodawanie, odejmowanie, mnożenie oraz dzielenie.</p>
+{/block}
+
+{block name=content}
+
+<form class="pure-form pure-form-stacked" action="{$conf->action_root}calc#calc" method="post" id="calc">
+	<fieldset>
+		<label for="x">Pierwsza liczba</label>
+		<input id="x" type="text" placeholder="wartość x" name="x" value="{$form->x}">
+		<label for="op">Operacja</label>
+		<div class="select-wrapper">
+		<select id="op" name="op">
+
+{if isset($result->op_name)}
+<option value="{$form->op}">ponownie: {$result->op_name}</option>
+<option value="" disabled="true">---</option>
+{/if}
+			<option value="plus">(+) dodaj</option>
+			<option value="minus">(-) odejmij</option>
+			<option value="times">(*) pomnóż</option>
+			<option value="div">(/) podziel</option>
+		</select>
+	</div>
+					
+		<label for="y">Druga liczba</label>
+		<input id="y" type="text" placeholder="wartość y" name="y" value="{$form->y}">
+	</fieldset>
+	<button type="submit" class="pure-button pure-button-primary">Oblicz</button>
+</form>
+
+<div class="messages">
+
+{* wyświeltenie listy błędów, jeśli istnieją *}
+{if $messages->isError()}
+	{if count($messages) > 0} 
+		<h4>Wystąpiły błędy: </h4>
+		<ol id="message">
+		{foreach  $messages->getErrors() as $err}
+		{strip}
+			<li>{$err}</li>
+		{/strip}
+		{/foreach}
+		</ol>
+	{/if}
+{/if}
+
+<!-- {* wyświeltenie listy informacji, jeśli istnieją *}
+{if isset($infos)}
+	{if count($infos) > 0} 
+		<h4>Informacje: </h4>
+		<ol id="info">
+		{foreach  $infos as $msg}
+		{strip}
+			<li>{$msg}</li>
+		{/strip}
+		{/foreach}
+		</ol>
+	{/if}
+{/if} -->
+
+{if isset($result->result)}
+<div class="result_success">
+	Wynik: {$result->result}
+	</div>
+{/if}
+
+</div>
+
+{/block}
